@@ -11,114 +11,100 @@
 #include <iostream>
 using namespace std;
 
-
-class computer{
-    
+class matrix {
 public:
-    int size = 3;
-    int *arr = new int [size];
-    
-    
-    
-    //Default constructor
-    
-    computer(int input = 0){
-        
-        int size = 3;
+    int rows;
+    int numbers;
+    int value;
+    int **grid;
 
-        
-        for(int x = 0 ; x < size ; x++){
-            arr[x] = input;
+    // Main constructor
+    matrix(int input1 = 0, int input2 = 0, int input3 = 0)
+    : rows(input1), numbers(input2), value(input3) {
+        grid = new int*[rows];
+        for (int i = 0; i < rows; i++) {
+            grid[i] = new int[numbers];
+            for (int j = 0; j < numbers; j++) {
+                grid[i][j] = value;
+            }
         }
-        
     }
-  
-    
-    
-    
-    //Copy constructor
-    
-    computer (computer const &obj1){
-        
-        int size = 3;
-        for(int y = 0 ; y < size ; y++){
-           arr[y] =  obj1.arr[y] ;
+
+    // Copy constructor
+    matrix(const matrix &obj) {
+        rows = obj.rows;
+        numbers = obj.numbers;
+        grid = new int*[rows];
+        for (int i = 0; i < rows; i++) {
+            grid[i] = new int[numbers];
+            for (int j = 0; j < numbers; j++) {
+                grid[i][j] = obj.grid[i][j];
+            }
         }
-        
     }
-    
-    
-    //Print out
-    
-    void print(){
-        
-        for (int i = 0 ; i < size ; i++) {
-            cout << arr[i] << endl;
+
+    // Assignment operator
+    matrix& operator=(const matrix &rhs) {
+        if (this != &rhs) {  // Protect against invalid self-assignment
+            // 1. Deallocate old memory
+            for (int i = 0; i < rows; i++) {
+                delete[] grid[i];
+            }
+            delete[] grid;
+
+            // 2. Allocate new memory and copy elements
+            rows = rhs.rows;
+            numbers = rhs.numbers;
+            grid = new int*[rows];
+            for (int i = 0; i < rows; i++) {
+                grid[i] = new int[numbers];
+                for (int j = 0; j < numbers; j++) {
+                    grid[i][j] = rhs.grid[i][j];
+                }
+            }
         }
-        
-        cout << "----------" <<endl;
-        
-    }
-    
-    //Operator overloading+
-    
-    computer operator+ (computer const &obj2){
-        int size = 3;
-        
-        computer result;
-        for (int x = 0 ; x < size ; x++){
-            result.arr[x] =  arr[x] + obj2.arr[x] ;
-        }
-        
-        return result;
-    }
-    
-    //Operator overloading =  
-    
-    computer operator= (computer const &obj3){
-        int size = 3;
-        //computer result;
-        for (int x = 0 ; x < size ; x++){
-            this->arr[x] = obj3.arr[x];
-        }
-      
         return *this;
     }
-    
-    
-    //Destructor
-    
-    ~ computer (){
-        
-        delete [] arr;
-        
-        cout << "memory deleted!" <<endl;
-        
-    }
-    
 
-    
-    
-    
-    
-    
+    // Addition operator
+    matrix operator+(const matrix &rhs) {
+        matrix result(rows, numbers, 0);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < numbers; j++) {
+                result.grid[i][j] = grid[i][j] + rhs.grid[i][j];
+            }
+        }
+        return result;
+    }
+
+    // Print function
+    void print() {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < numbers; j++) {
+                cout << grid[i][j] << " ";
+            }
+            cout << endl;
+        }
+        cout << "---------" << endl;
+    }
+
+    // Destructor to handle deallocation
+    ~matrix() {
+        for (int i = 0; i < rows; i++) {
+            delete[] grid[i];
+        }
+        delete[] grid;
+    }
 };
 
-int main(){
-    
-    
-    computer c1(10);
-    computer c2(5);
-    computer c3;
-    
-    c3 = c1 + c2;
-    
-    c1.print();
-    c2.print();
-    c3.print();
+int main() {
+    matrix m1(3, 4, 2);  // 3x4 matrix with all values set to 2
+    m1.print();
+    matrix m2(3, 4, 5);  // 3x4 matrix with all values set to 0
+    m2.print();
+    matrix m3;
+    m3 = m1 + m2;
+    m3.print();
 
-    
-    
     return 0;
 }
-
